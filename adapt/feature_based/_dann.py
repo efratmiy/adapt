@@ -170,6 +170,14 @@ and V. Lempitsky. "Domain-adversarial training of neural networks". In JMLR, 201
         self.optimizer_disc.apply_gradients(zip(gradients_disc, trainable_vars_disc))
         
         # Update metrics
+        if isinstance(ys, tuple):
+            # Split ys_pred by the second dimension to align with ys
+            ys_pred_split = tf.split(ys_pred, num_or_size_splits=ys_pred.shape[0], axis=0)
+
+            # Convert from a list of rank 3 tensors each with shape [1, batch_size, ...] to a list of rank 2 tensors with shape [batch_size, ...]
+            ys_pred_split = [tf.squeeze(pred, axis=0) for pred in ys_pred_split]
+            ys_pred = tuple(ys_pred_split)
+
         self.compiled_metrics.update_state(ys, ys_pred)
         self.compiled_loss(ys, ys_pred)
         # Return a dict mapping metric names to current value

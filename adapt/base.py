@@ -984,7 +984,8 @@ class BaseAdaptDeep(Model, BaseAdapt):
         if not isinstance(X, tf.data.Dataset):
             check_arrays(X, y)
             if len(y.shape) <= 1:
-                y = y.reshape(-1, 1)
+                # y = y.reshape(-1, 1)
+                y = y.to_numpy().reshape(-1, 1)
             
             # Single source
             if domains is None:
